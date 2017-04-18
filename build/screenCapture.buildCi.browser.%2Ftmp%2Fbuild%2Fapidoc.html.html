@@ -1,0 +1,224 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a href="https://github.com/xissy/node-amazon-reviews">amazon-reviews (v0.0.4)</a>
+</h1>
+<h4>A node.js module to crawl product reviews from Amazon.</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.amazon-reviews">module amazon-reviews</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.amazon-reviews.getReview">
+            function <span class="apidocSignatureSpan">amazon-reviews.</span>getReview
+            <span class="apidocSignatureSpan">(options, callback)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.amazon-reviews.getReviewIds">
+            function <span class="apidocSignatureSpan">amazon-reviews.</span>getReviewIds
+            <span class="apidocSignatureSpan">(options, callback)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.amazon-reviews" id="apidoc.module.amazon-reviews">module amazon-reviews</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.amazon-reviews.getReview" id="apidoc.element.amazon-reviews.getReview">
+        function <span class="apidocSignatureSpan">amazon-reviews.</span>getReview
+        <span class="apidocSignatureSpan">(options, callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">getReview = function (options, callback) {
+  var reviewMobilePage;
+  if ((options != null ? options.productId : void 0) == null) {
+    return callback(new Error('no options.productId'));
+  }
+  if ((options != null ? options.reviewId : void 0) == null) {
+    return callback(new Error('no options.reviewId'));
+  }
+  options.url = "http://www.amazon.com/gp/aw/review/" + options.productId + "/" + options.reviewId;
+  return reviewMobilePage = new ReviewMobilePage(options, function(err, $) {
+    var review, reviewDesktopPage;
+    if (err != null) {
+      return callback(err);
+    }
+    reviewMobilePage.$ = $;
+    review = reviewMobilePage.parse();
+    options.url = "http://www.amazon.com/review/" + options.reviewId;
+    return reviewDesktopPage = new ReviewDesktopPage(options, function(err, $) {
+      var k, v, _ref;
+      if (err != null) {
+        return callback(err);
+      }
+      reviewDesktopPage.$ = $;
+      _ref = reviewDesktopPage.parse();
+      for (k in _ref) {
+        v = _ref[k];
+        review[k] = v;
+      }
+      return callback(null, review);
+    });
+  });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+}, function(err, reviewIds) {
+  ...
+});
+```
+
+### Get a review by product ID and review ID
+```javascript
+AmazonReviews.<span class="apidocCodeKeywordSpan">getReview</span>({
+  productId: 'PRODUCT_ID_HERE',
+  reviewId: 'REVIEW_ID_HERE'
+}, function(err, review) {
+  ...
+});
+```
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.amazon-reviews.getReviewIds" id="apidoc.element.amazon-reviews.getReviewIds">
+        function <span class="apidocSignatureSpan">amazon-reviews.</span>getReviewIds
+        <span class="apidocSignatureSpan">(options, callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">getReviewIds = function (options, callback) {
+  var allCustomerReviewsPage, currentUrl, isLastPage, reviewIds;
+  if (options.productId == null) {
+    return callback(new Error('no options.productId'));
+  }
+  reviewIds = [];
+  isLastPage = false;
+  currentUrl = "http://www.amazon.com/product-reviews/" + options.productId + "/ref=cm_cr_pr_top_recent?ie=UTF8&amp;showViewpoints=0
+&amp;sortBy=bySubmissionDateDescending";
+  return allCustomerReviewsPage = new AllCustomerReviewsPage({
+    url: currentUrl
+  }, function(err, $) {
+    var lastPageNo, nextPageUrl, reviewPageNos, _i, _results;
+    if (err != null) {
+      return callback(err);
+    }
+    allCustomerReviewsPage.$ = $;
+    reviewIds = reviewIds.concat(allCustomerReviewsPage.getReviewIds());
+    nextPageUrl = allCustomerReviewsPage.getNextPageUrl();
+    lastPageNo = allCustomerReviewsPage.getLastPageNo();
+    if (lastPageNo &lt;= 1) {
+      return callback(null, reviewIds);
+    }
+    reviewPageNos = (function() {
+      _results = [];
+      for (var _i = 2; 2 &lt;= lastPageNo ? _i &lt;= lastPageNo : _i &gt;= lastPageNo; 2 &lt;= lastPageNo ? _i++ : _i--){ _results.push(_i); }
+      return _results;
+    }).apply(this);
+    return async.forEachLimit(reviewPageNos, 100, function(reviewPageNo, callback) {
+      return allCustomerReviewsPage = new AllCustomerReviewsPage({
+        url: nextPageUrl.replace(/pageNumber=[\d]*/g, "pageNumber=" + reviewPageNo)
+      }, function(err, $) {
+        if (err != null) {
+          return callback(err);
+        }
+        allCustomerReviewsPage.$ = $;
+        reviewIds = reviewIds.concat(allCustomerReviewsPage.getReviewIds());
+        return callback(null);
+      });
+    }, function(err) {
+      if (err != null) {
+        return callback(err);
+      }
+      return callback(null, reviewIds);
+    });
+  });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+### Load in the module
+```javascript
+var AmazonReviews = require('amazon-reviews');
+```
+
+### Get review IDs by a product ID
+```javascript
+AmazonReviews.<span class="apidocCodeKeywordSpan">getReviewIds</span>({
+  productId: 'PRODUCT_ID_HERE'
+}, function(err, reviewIds) {
+  ...
+});
+```
+
+### Get a review by product ID and review ID
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>

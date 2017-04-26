@@ -1,6 +1,6 @@
 # npmdoc-amazon-reviews
 
-#### api documentation for  [amazon-reviews (v0.0.4)](https://github.com/xissy/node-amazon-reviews)  [![npm package](https://img.shields.io/npm/v/npmdoc-amazon-reviews.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-amazon-reviews) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-amazon-reviews.svg)](https://travis-ci.org/npmdoc/node-npmdoc-amazon-reviews)
+#### basic api documentation for  [amazon-reviews (v0.0.4)](https://github.com/xissy/node-amazon-reviews)  [![npm package](https://img.shields.io/npm/v/npmdoc-amazon-reviews.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-amazon-reviews) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-amazon-reviews.svg)](https://travis-ci.org/npmdoc/node-npmdoc-amazon-reviews)
 
 #### A node.js module to crawl product reviews from Amazon.
 
@@ -68,7 +68,8 @@
     "scripts": {
         "test": "mocha --compilers coffee:coffee-script --require coffee-script/register --globals lw --recursive ./test -t 50000"
     },
-    "version": "0.0.4"
+    "version": "0.0.4",
+    "bin": {}
 }
 ```
 
